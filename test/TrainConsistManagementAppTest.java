@@ -1,77 +1,67 @@
 import org.junit.jupiter.api.Test;
-import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrainConsistManagementAppTest {
 
-    static class GoodsBogie {
-        String type;
-        String cargo;
+    static class InvalidCapacityException extends Exception {
+        public InvalidCapacityException(String message) {
+            super(message);
+        }
+    }
 
-        GoodsBogie(String type, String cargo) {
+    static class PassengerBogie {
+        String type;
+        int capacity;
+
+        PassengerBogie(String type, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Capacity must be greater than zero");
+            }
             this.type = type;
-            this.cargo = cargo;
+            this.capacity = capacity;
         }
     }
 
     @Test
-    void testSafety_AllBogiesValid() {
-        List<GoodsBogie> list = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Petroleum"),
-                new GoodsBogie("Open", "Coal")
-        );
-
-        boolean result = list.stream()
-                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
-
-        assertTrue(result);
+    void testException_ValidCapacityCreation() throws InvalidCapacityException {
+        PassengerBogie b = new PassengerBogie("Sleeper", 72);
+        assertEquals(72, b.capacity);
     }
 
     @Test
-    void testSafety_CylindricalWithInvalidCargo() {
-        List<GoodsBogie> list = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Coal")
-        );
-
-        boolean result = list.stream()
-                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
-
-        assertFalse(result);
+    void testException_NegativeCapacityThrowsException() {
+        assertThrows(InvalidCapacityException.class, () -> {
+            new PassengerBogie("Sleeper", -10);
+        });
     }
 
     @Test
-    void testSafety_NonCylindricalBogiesAllowed() {
-        List<GoodsBogie> list = Arrays.asList(
-                new GoodsBogie("Open", "Coal"),
-                new GoodsBogie("Box", "Grain")
-        );
-
-        boolean result = list.stream()
-                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
-
-        assertTrue(result);
+    void testException_ZeroCapacityThrowsException() {
+        assertThrows(InvalidCapacityException.class, () -> {
+            new PassengerBogie("Sleeper", 0);
+        });
     }
 
     @Test
-    void testSafety_MixedBogiesWithViolation() {
-        List<GoodsBogie> list = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Petroleum"),
-                new GoodsBogie("Cylindrical", "Coal")
-        );
-
-        boolean result = list.stream()
-                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
-
-        assertFalse(result);
+    void testException_ExceptionMessageValidation() {
+        Exception ex = assertThrows(InvalidCapacityException.class, () -> {
+            new PassengerBogie("Sleeper", -5);
+        });
+        assertEquals("Capacity must be greater than zero", ex.getMessage());
     }
 
     @Test
-    void testSafety_EmptyBogieList() {
-        List<GoodsBogie> list = new ArrayList<>();
+    void testException_ObjectIntegrityAfterCreation() throws InvalidCapacityException {
+        PassengerBogie b = new PassengerBogie("AC Chair", 56);
+        assertEquals("AC Chair", b.type);
+        assertEquals(56, b.capacity);
+    }
 
-        boolean result = list.stream()
-                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
-
-        assertTrue(result);
+    @Test
+    void testException_MultipleValidBogiesCreation() throws InvalidCapacityException {
+        PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+        PassengerBogie b2 = new PassengerBogie("First Class", 24);
+        assertNotNull(b1);
+        assertNotNull(b2);
     }
 }
