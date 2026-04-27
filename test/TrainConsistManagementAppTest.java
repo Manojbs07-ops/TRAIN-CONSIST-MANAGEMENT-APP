@@ -3,65 +3,47 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TrainConsistManagementAppTest {
 
-    static class InvalidCapacityException extends Exception {
-        public InvalidCapacityException(String message) {
-            super(message);
-        }
-    }
-
-    static class PassengerBogie {
-        String type;
-        int capacity;
-
-        PassengerBogie(String type, int capacity) throws InvalidCapacityException {
-            if (capacity <= 0) {
-                throw new InvalidCapacityException("Capacity must be greater than zero");
+    private int[] bubbleSort(int[] arr) {
+        int[] a = arr.clone();
+        for (int i = 0; i < a.length - 1; i++) {
+            for (int j = 0; j < a.length - i - 1; j++) {
+                if (a[j] > a[j + 1]) {
+                    int temp = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = temp;
+                }
             }
-            this.type = type;
-            this.capacity = capacity;
         }
+        return a;
     }
 
     @Test
-    void testException_ValidCapacityCreation() throws InvalidCapacityException {
-        PassengerBogie b = new PassengerBogie("Sleeper", 72);
-        assertEquals(72, b.capacity);
+    void testSort_BasicSorting() {
+        int[] result = bubbleSort(new int[]{72, 56, 24, 70, 60});
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, result);
     }
 
     @Test
-    void testException_NegativeCapacityThrowsException() {
-        assertThrows(InvalidCapacityException.class, () -> {
-            new PassengerBogie("Sleeper", -10);
-        });
+    void testSort_AlreadySortedArray() {
+        int[] result = bubbleSort(new int[]{24, 56, 60, 70, 72});
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, result);
     }
 
     @Test
-    void testException_ZeroCapacityThrowsException() {
-        assertThrows(InvalidCapacityException.class, () -> {
-            new PassengerBogie("Sleeper", 0);
-        });
+    void testSort_DuplicateValues() {
+        int[] result = bubbleSort(new int[]{72, 56, 56, 24});
+        assertArrayEquals(new int[]{24, 56, 56, 72}, result);
     }
 
     @Test
-    void testException_ExceptionMessageValidation() {
-        Exception ex = assertThrows(InvalidCapacityException.class, () -> {
-            new PassengerBogie("Sleeper", -5);
-        });
-        assertEquals("Capacity must be greater than zero", ex.getMessage());
+    void testSort_SingleElementArray() {
+        int[] result = bubbleSort(new int[]{50});
+        assertArrayEquals(new int[]{50}, result);
     }
 
     @Test
-    void testException_ObjectIntegrityAfterCreation() throws InvalidCapacityException {
-        PassengerBogie b = new PassengerBogie("AC Chair", 56);
-        assertEquals("AC Chair", b.type);
-        assertEquals(56, b.capacity);
-    }
-
-    @Test
-    void testException_MultipleValidBogiesCreation() throws InvalidCapacityException {
-        PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
-        PassengerBogie b2 = new PassengerBogie("First Class", 24);
-        assertNotNull(b1);
-        assertNotNull(b2);
+    void testSort_AllEqualValues() {
+        int[] result = bubbleSort(new int[]{40, 40, 40});
+        assertArrayEquals(new int[]{40, 40, 40}, result);
     }
 }

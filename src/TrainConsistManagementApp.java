@@ -1,37 +1,31 @@
 public class TrainConsistManagementApp {
 
-    static class InvalidCapacityException extends Exception {
-        public InvalidCapacityException(String message) {
-            super(message);
-        }
-    }
-
-    static class PassengerBogie {
-        String type;
-        int capacity;
-
-        PassengerBogie(String type, int capacity) throws InvalidCapacityException {
-            if (capacity <= 0) {
-                throw new InvalidCapacityException("Capacity must be greater than zero");
-            }
-            this.type = type;
-            this.capacity = capacity;
-        }
-    }
-
     public static void main(String[] args) {
 
         System.out.println("======================================");
-        System.out.println("UC14 - Handle Invalid Bogie Capacity");
+        System.out.println("UC16 - Manual Sorting using Bubble Sort");
         System.out.println("======================================\n");
 
-        try {
-            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
-            PassengerBogie b2 = new PassengerBogie("AC Chair", -10);
-            System.out.println(b1.type + " -> " + b1.capacity);
-            System.out.println(b2.type + " -> " + b2.capacity);
-        } catch (InvalidCapacityException e) {
-            System.out.println("Exception: " + e.getMessage());
+        int[] capacities = {72, 56, 24, 70, 60};
+
+        System.out.println("Original Capacities:");
+        for (int c : capacities) {
+            System.out.print(c + " ");
+        }
+
+        for (int i = 0; i < capacities.length - 1; i++) {
+            for (int j = 0; j < capacities.length - i - 1; j++) {
+                if (capacities[j] > capacities[j + 1]) {
+                    int temp = capacities[j];
+                    capacities[j] = capacities[j + 1];
+                    capacities[j + 1] = temp;
+                }
+            }
+        }
+
+        System.out.println("\n\nSorted Capacities (Ascending):");
+        for (int c : capacities) {
+            System.out.print(c + " ");
         }
     }
 }
