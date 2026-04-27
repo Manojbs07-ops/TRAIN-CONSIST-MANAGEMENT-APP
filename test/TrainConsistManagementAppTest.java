@@ -1,10 +1,7 @@
-import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import static org.junit.jupiter.api.Assertions.*;
 
-class TrainConsistManagementAppTest {
+public class TrainConsistManagementApp {
 
     static class Bogie {
         String name;
@@ -16,96 +13,41 @@ class TrainConsistManagementAppTest {
         }
     }
 
-    private List<Bogie> getSampleBogies() {
+    public static void main(String[] args) {
+
+        System.out.println("======================================");
+        System.out.println("UC9 - Group Bogies by Type");
+        System.out.println("======================================\n");
+
+        // Create list
         List<Bogie> bogies = new ArrayList<>();
+
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 56));
         bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("General", 90));
-        return bogies;
-    }
+        bogies.add(new Bogie("Sleeper", 70));
+        bogies.add(new Bogie("AC Chair", 60));
 
-    // 1️⃣ Capacity > threshold
-    @Test
-    void testFilter_CapacityGreaterThanThreshold() {
-        List<Bogie> result = getSampleBogies().stream()
-                .filter(b -> b.capacity > 70)
-                .collect(Collectors.toList());
+        // Display all bogies
+        System.out.println("All Bogies:");
+        for (Bogie b : bogies) {
+            System.out.println(b.name + " -> " + b.capacity);
+        }
 
-        assertEquals(2, result.size()); // Sleeper + General
-    }
+        // Group using groupingBy
+        Map<String, List<Bogie>> grouped =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(b -> b.name));
 
-    // 2️⃣ Capacity == threshold
-    @Test
-    void testFilter_CapacityEqualToThreshold() {
-        List<Bogie> result = getSampleBogies().stream()
-                .filter(b -> b.capacity > 72)
-                .collect(Collectors.toList());
+        // Display grouped data
+        System.out.println("\nGrouped Bogies:");
+        for (Map.Entry<String, List<Bogie>> entry : grouped.entrySet()) {
+            System.out.println("\nBogie Type: " + entry.getKey());
+            for (Bogie b : entry.getValue()) {
+                System.out.println("Capacity -> " + b.capacity);
+            }
+        }
 
-        assertFalse(result.stream().anyMatch(b -> b.capacity == 72));
-    }
-
-    // 3️⃣ Capacity < threshold
-    @Test
-    void testFilter_CapacityLessThanThreshold() {
-        List<Bogie> result = getSampleBogies().stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-
-        assertFalse(result.stream().anyMatch(b -> b.capacity < 60));
-    }
-
-    // 4️⃣ Multiple matches
-    @Test
-    void testFilter_MultipleBogiesMatching() {
-        List<Bogie> result = getSampleBogies().stream()
-                .filter(b -> b.capacity > 50)
-                .collect(Collectors.toList());
-
-        assertEquals(3, result.size());
-    }
-
-    // 5️⃣ No matches
-    @Test
-    void testFilter_NoBogiesMatching() {
-        List<Bogie> result = getSampleBogies().stream()
-                .filter(b -> b.capacity > 200)
-                .collect(Collectors.toList());
-
-        assertTrue(result.isEmpty());
-    }
-
-    // 6️⃣ All match
-    @Test
-    void testFilter_AllBogiesMatching() {
-        List<Bogie> result = getSampleBogies().stream()
-                .filter(b -> b.capacity > 10)
-                .collect(Collectors.toList());
-
-        assertEquals(4, result.size());
-    }
-
-    // 7️⃣ Empty list
-    @Test
-    void testFilter_EmptyBogieList() {
-        List<Bogie> empty = new ArrayList<>();
-
-        List<Bogie> result = empty.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-
-        assertTrue(result.isEmpty());
-    }
-
-    // 8️⃣ Original list unchanged
-    @Test
-    void testFilter_OriginalListUnchanged() {
-        List<Bogie> original = getSampleBogies();
-
-        List<Bogie> result = original.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-
-        assertEquals(4, original.size()); // original unchanged
+        System.out.println("\nUC9 grouping completed...");
     }
 }
